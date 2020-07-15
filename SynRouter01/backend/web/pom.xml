@@ -71,7 +71,7 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
-                    <mainClass></mainClass>
+                    <mainClass>learn.lhb.synrouter01.WebApplication</mainClass>
                 </configuration>
             </plugin>
         </plugins>

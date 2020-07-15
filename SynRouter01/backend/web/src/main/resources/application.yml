@@ -1,2 +1,36 @@
 server:
   port: 12100
+
+spring:
+  #druid 数据库连接池配置
+  datasource:
+    druid:
+      url: jdbc:mysql://localhost:3306/syn_router01?useUnicode=true&characterEncoding=utf-8&useSSL=false
+      username: root
+      password: 123456
+      initial-size: 1
+      min-idle: 1
+      max-active: 20
+      test-on-borrow: true
+      # MySQL 8.x: com.mysql.cj.jdbc.Driver
+      driver-class-name: com.mysql.jdbc.Driver
+
+#mybatis
+mybatis:
+  mapper-locations: classpath*:mapper/*.xml
+  type-aliases-package: learn.lhb.synrouter01.domain
+#  config-location: mapper/*.xml
+
+#pagehelper 分页插件
+pagehelper:
+  helperDialect: mysql
+  reasonable: false #此功能开启，若页数大于加载的数量返回最后一页的数据量，若页数小于1，则返回第一页的数量。前后端分离应关闭。
+  supportMethodsArguments: true
+  params: count=countSql
+  returnPageInfo: check
+
+logging:
+  level:
+    learn.lhb.synrouter01.web: trace
+    learn.lhb.synrouter01.mapper: trace
+    learn.lhb.synrouter01.service: trace
