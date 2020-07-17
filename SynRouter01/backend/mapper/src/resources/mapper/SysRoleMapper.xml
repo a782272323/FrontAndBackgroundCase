@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="learn.lhb.synrouter01.mapper.SysRoleMapper">
+    <resultMap id="SysRoleMap" type="learn.lhb.synrouter01.domain.entity.SysRoleEntity">
+        <id column="id" property="id" />
+        <result column="name" property="name" />
+        <result column="name_zh" property="nameZh" />
+        <result column="enabled" property="enabled" />
+        <result column="description" property="description" />
+        <result column="created" property="created" />
+        <result column="updated" property="updated" />
+    </resultMap>
+
+    <!-- 用户名获取对应的角色name -->
+    <select id="getRoleNameByUsername" resultMap="SysRoleMap">
+        SELECT * FROM sys_role
+        WHERE id IN
+        (
+            SELECT sys_account_role.role_id FROM sys_account,sys_account_role
+            WHERE sys_account.id = sys_account_role.account_id
+            AND sys_account.username = #{username}
+        )
+    </select>
+</mapper>

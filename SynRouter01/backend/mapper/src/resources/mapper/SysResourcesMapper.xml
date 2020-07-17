@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="learn.lhb.synrouter01.mapper.SysResourcesMapper">
+    <resultMap id="SysResourcesUrlMap" type="learn.lhb.synrouter01.domain.entity.SysResourcesEntity">
+        <id column="id" property="id" />
+        <result column="url" property="url" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 根据角色名查询能访问的权限 -->
+    <select id="getUrlByRoleName" resultMap="SysResourcesUrlMap">
+        SELECT url FROM sys_resources WHERE id IN
+        (
+            SELECT sys_resources_role.resources_id FROM sys_role,sys_resources_role
+            WHERE sys_role.id=sys_resources_role.role_id AND sys_role.name = #{roleName}
+        )
+    </select>
+</mapper>

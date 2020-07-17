@@ -37,6 +37,10 @@ public class SysRoleEntity implements Serializable {
      * 创建时间
      */
     private Date created;
+    /**
+     * 更新时间
+     */
+    private Date updated;
 
     @Override
     public String toString() {
@@ -47,7 +51,16 @@ public class SysRoleEntity implements Serializable {
                 ", enabled='" + enabled + '\'' +
                 ", description='" + description + '\'' +
                 ", created=" + created +
+                ", updated=" + updated +
                 '}';
+    }
+
+    public Date getUpdated() {
+        return updated;
+    }
+
+    public void setUpdated(Date updated) {
+        this.updated = updated;
     }
 
     public Long getId() {

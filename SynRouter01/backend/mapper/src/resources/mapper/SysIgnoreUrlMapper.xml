@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="learn.lhb.synrouter01.mapper.SysIgnoreUrlMapper">
+    <resultMap id="SysIgnoreUrlMap" type="learn.lhb.synrouter01.domain.entity.SysIgnoreUrlEntity">
+        <id column="id" property="id" />
+        <result column="url" property="url" />
+        <result column="description" property="description" />
+    </resultMap>
+
+    <!-- 获取 ignore url -->
+    <select id="getIgnoreUrl" resultMap="SysIgnoreUrlMap">
+        SELECT * FROM sys_ignore_url
+    </select>
+</mapper>
