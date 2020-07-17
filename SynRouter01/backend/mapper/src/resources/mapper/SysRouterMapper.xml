@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
 <mapper namespace="learn.lhb.synrouter01.mapper.SysRouterMapper">
+
     <resultMap id="SysRouterMap" type="learn.lhb.synrouter01.domain.entity.SysRouterEntity">
         <id column="id" property="id" />
         <result column="path" property="path" />
@@ -13,4 +14,41 @@
         <result column="description" property="description" />
         <result column="created" property="created" />
     </resultMap>
+
+
+    <!-- 根据角色名，获取用户对应的路由树（路由表） -->
+    <resultMap id="routerTreeMap" type="learn.lhb.synrouter01.domain.vo.SysRouterVo">
+        <id column="id" property="id" />
+        <result column="path" property="path" />
+        <result column="redirect" property="redirect" />
+        <result column="component" property="component" />
+        <result column="name" property="name" />
+        <result column="parent_id" property="parentId" />
+        <result column="description" property="description" />
+        <result column="created" property="created" />
+        <!-- 级联 -->
+        <association property="meta" javaType="learn.lhb.synrouter01.domain.vo.MetaVo">
+            <result column="title" property="title" />
+            <result column="icon" property="icon" />
+        </association>
+        <!-- 递归查询 -->
+        <collection property="children" column="id" ofType="learn.lhb.synrouter01.domain.vo.SysRouterVo"
+        javaType="java.util.ArrayList" select="getRouterChildren"/>
+    </resultMap>
+    <!-- 先查询角色拥有的根级别的资源 -->
+    <select id="getRouterTree" resultMap="routerTreeMap">
+        SELECT id,path,redirect,component,name,title,icon,parent_id,description
+        FROM sys_router
+        WHERE id IN
+              (
+                  SELECT sys_role_router.router_id FROM sys_role,sys_role_router
+                  WHERE sys_role.id = sys_role_router.role_id
+                    AND sys_role.name = #{roleName}
+              )
+            AND parent_id IS NULL OR parent_id = ''
+    </select>
+    <!-- 递归查询,利用上面查询结果的column的id的值做递归查询,查出所有菜单 -->
+    <select id="getRouterChildren" resultMap="routerTreeMap">
+        SELECT * FROM sys_router WHERE parent_id = #{parent_id}
+    </select>
 </mapper>

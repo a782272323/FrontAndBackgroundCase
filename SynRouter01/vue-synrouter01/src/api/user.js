@@ -11,6 +11,7 @@ export function login(data) {
     })
 }
 
+// 跳转首页
 export function getInfo(token) {
     return request({
         url: '/v1/user/info',
@@ -19,9 +20,18 @@ export function getInfo(token) {
     })
 }
 
+// 注销
 export function logout() {
     return request({
         url: '/v1/user/logout',
         method: 'post'
     })
+}
+
+// 请求后端路由数据
+export function getRouterMenu(token) {
+  return request({
+    url: '/v1/user/router',
+    method: 'get'
+  })
 }

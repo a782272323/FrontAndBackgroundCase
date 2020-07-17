@@ -94,7 +94,62 @@ export const constantRoutes = [
                 meta: { title: '个人信息', icon: 'user', noCache: true }
             }
         ]
-    }
+    },
+    // 测试动态路由1
+  {
+    path: '/test01',
+    component: Layout,
+    redirect: '/test01/one',
+    hidden: true,
+    meta: { title: '动态路由01', icon: 'user' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'one',
+        component: () => import('@/views/test01/one'),
+        name: 'Test01One',
+        meta: { title: '子路由一' }
+      },
+      {
+        path: 'two',
+        component: () => import('@/views/test01/two'),
+        name: 'Test01Two',
+        meta: { title: '子路由二' }
+      }
+    ]
+  },
+  // 测试动态路由2
+  {
+    path: '/test02',
+    component: Layout,
+    redirect: '/test02/one',
+    hidden: true,
+    meta: { title: '动态路由02', icon: 'bug' },
+    alwaysShow: true,
+    children: [
+      {
+        path: 'one',
+        component: () => import('@/views/test02/one'),
+        name: 'Test02One',
+        meta: { title: '子路由一' }
+      },
+      {
+        path: 'two',
+        component: () => import('@/views/test02/two'),
+        name: 'Test02Two',
+        meta: { title: '子路由二' }
+      }
+    ]
+  },
+  // 测试没有子路由的动态路由
+  {
+    path: '/test03',
+    component: Layout,
+    redirect: '/test03/index',
+    hidden: true,
+    alwaysShow: false,
+    meta: { title: '没有子路由', icon: '404' }
+  }
 ]
 
 /**

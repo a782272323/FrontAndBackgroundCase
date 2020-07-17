@@ -1,15 +1,19 @@
 package learn.lhb.synrouter01.controller;
 
+import com.google.common.collect.Maps;
 import learn.lhb.synrouter01.commons.constant.HttpConstant;
 import learn.lhb.synrouter01.commons.utils.BaseResult;
 import learn.lhb.synrouter01.domain.dto.JwtUser;
 import learn.lhb.synrouter01.domain.vo.LoginInfoVo;
 import learn.lhb.synrouter01.mapper.SysRoleMapper;
+import learn.lhb.synrouter01.mapper.SysRouterMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Map;
 
 /**
  * @Description  登录模块 controller
@@ -27,6 +31,9 @@ public class LoginController {
 
     @Autowired
     private SysRoleMapper sysRoleMapper;
+
+    @Autowired
+    private SysRouterMapper sysRouterMapper;
 
     /**
      * 登录成功后跳转首页
@@ -57,5 +64,19 @@ public class LoginController {
         LOG.info(" 权限 = " + jwtUser.getAuthorities());
 
         return BaseResult.ok();
+    }
+
+    /**
+     * 获取路由表
+     * @param authentication
+     * @return
+     */
+    @GetMapping("router")
+    public BaseResult router(Authentication authentication) {
+        String username = authentication.getName();
+        LOG.info("username = " + username);
+        Map<String, Object> map = Maps.newHashMap();
+        map.put("getRouterTree", sysRouterMapper.getRouterTree(sysRoleMapper.getRoleNameByUsername(username).getName()));
+        return BaseResult.ok().put(HttpConstant.OK,HttpConstant.MSG_DEFAULT_OK,"data",map);
     }
 }
