@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+
+    <parent>
+        <groupId>learn.lhb.oauth2.vue01</groupId>
+        <artifactId>oauth2-vue01-dependencies</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+        <relativePath>../oauth2-vue01-dependencies/pom.xml</relativePath>
+    </parent>
+
+    <artifactId>oauth2-vue01-mapper</artifactId>
+    <packaging>jar</packaging>
+    <name>oauth2-vue01-mapper</name>
+    <description>数据访问模块</description>
+
+    <dependencies>
+        <!-- Project Begin -->
+        <dependency>
+            <groupId>learn.lhb.oauth2.vue01</groupId>
+            <artifactId>oauth2-vue01-commons</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>learn.lhb.oauth2.vue01</groupId>
+            <artifactId>oauth2-vue01-domain</artifactId>
+            <version>${project.parent.version}</version>
+        </dependency>
+        <!-- Project End -->
+
+        <!-- 整合druid -->
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>druid-spring-boot-starter</artifactId>
+        </dependency>
+
+
+
+    </dependencies>
+
+</project>
