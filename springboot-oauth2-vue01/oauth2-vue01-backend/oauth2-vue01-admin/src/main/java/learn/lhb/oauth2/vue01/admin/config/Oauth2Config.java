@@ -1,8 +1,10 @@
 package learn.lhb.oauth2.vue01.admin.config;
 
+import learn.lhb.oauth2.vue01.admin.handler.CustomAuthExceptionHandler;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -19,9 +21,9 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Res
 import org.springframework.security.oauth2.provider.ClientDetailsService;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
+import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
 
@@ -83,6 +85,8 @@ public class Oauth2Config {
                     // 下边路径放行,不需要认证
                     // 门户网站前缀的接口，直接放行
                     .antMatchers("/portal/**").permitAll()
+                    // 测试的接口，直接放行
+                    .antMatchers("/test/**").permitAll()
                     // OPTIONS请求不需要鉴权
                     .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 
@@ -139,6 +143,18 @@ public class Oauth2Config {
         @Resource
         private ClientDetailsService clientDetailsService;
 
+        @Autowired
+        private RedisConnectionFactory connectionFactory;
+
+        /**
+         * 使用redis来存储令牌
+         * @return
+         */
+        @Bean
+        public RedisTokenStore redisTokenStore() {
+            return new RedisTokenStore(connectionFactory);
+        }
+
         /**
          * 客户端详情配置
          * 暂时使用内存存储
@@ -147,6 +163,7 @@ public class Oauth2Config {
          */
         @Override
         public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+            // 基于内存存储
             clients.inMemory()
                     // client_id
                     .withClient(CLIENT_ID)

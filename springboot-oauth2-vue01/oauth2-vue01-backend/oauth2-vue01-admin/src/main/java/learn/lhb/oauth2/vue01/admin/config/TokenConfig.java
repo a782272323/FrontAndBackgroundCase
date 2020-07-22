@@ -7,6 +7,7 @@ import org.springframework.security.oauth2.provider.token.store.InMemoryTokenSto
 
 /**
  * @Description  令牌
+ * 不基于内存存储时就废弃了。
  * @author Herbie Leung(梁鸿斌)
  * @date 2020/7/22 
  * @time 11:35

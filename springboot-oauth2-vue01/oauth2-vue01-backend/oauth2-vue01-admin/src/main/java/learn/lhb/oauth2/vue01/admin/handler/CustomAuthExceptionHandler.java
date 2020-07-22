@@ -1,4 +1,4 @@
-package learn.lhb.oauth2.vue01.admin.config;
+package learn.lhb.oauth2.vue01.admin.handler;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.collect.Maps;
