@@ -1,7 +1,9 @@
 package learn.lhb.oauth2.vue01.admin.config;
 
-import learn.lhb.oauth2.vue01.admin.handler.CustomAuthExceptionHandler;
+import learn.lhb.oauth2.vue01.admin.handler.AuthExceptionEntryHandler;
+import learn.lhb.oauth2.vue01.admin.handler.CustomAccessDeniedHandler;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -19,10 +21,10 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
 import org.springframework.security.oauth2.provider.token.TokenStore;
-import org.springframework.security.oauth2.provider.token.store.InMemoryTokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
@@ -60,11 +62,16 @@ public class Oauth2Config {
     @EnableResourceServer
     protected static class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 
-        @Autowired
-        private CustomAuthExceptionHandler customAuthExceptionHandler;
 
         @Autowired
-        private TokenStore tokenStore;
+        private OAuth2WebSecurityExpressionHandler expressionHandler;
+
+        @Bean
+        public OAuth2WebSecurityExpressionHandler oAuth2WebSecurityExpressionHandler(ApplicationContext applicationContext) {
+            OAuth2WebSecurityExpressionHandler expressionHandler = new OAuth2WebSecurityExpressionHandler();
+            expressionHandler.setApplicationContext(applicationContext);
+            return expressionHandler;
+        }
 
         /**
          * 配置安全拦截机制
@@ -90,7 +97,8 @@ public class Oauth2Config {
                     // OPTIONS请求不需要鉴权
                     .antMatchers(HttpMethod.OPTIONS,"/**").permitAll()
 
-            // 以下为配置所需保护的资源路径及权限，需要与认证服务器配置的授权部分对应
+                    // 以下为配置所需保护的资源路径及权限，需要与认证服务器配置的授权部分对应
+                    .antMatchers("/lhb").hasAnyAuthority("ppp")
 
             ;
 
@@ -102,12 +110,15 @@ public class Oauth2Config {
         @Override
         public void configure(ResourceServerSecurityConfigurer resources) throws Exception {
             resources
-                    // 自定义异常处理
-                    .authenticationEntryPoint(customAuthExceptionHandler)
+                    .expressionHandler(expressionHandler)
+                    // 资源id
                     .resourceId(RESOURCE_ID)
-                    .tokenStore(tokenStore)
+                    // 自定义异常处理
+                    .authenticationEntryPoint(new AuthExceptionEntryHandler())
+                    .accessDeniedHandler(new CustomAccessDeniedHandler())
                     // 在这些资源上只允许基于令牌的身份验证。(具体干哈不清楚)
-                    .stateless(true);
+                    .stateless(true)
+            ;
 
         }
     }
@@ -131,11 +142,11 @@ public class Oauth2Config {
         @Resource
         private AuthenticationManager authenticationManager;
 
-        /**
-         * 令牌
-         */
-        @Resource
-        private TokenStore tokenStore;
+//        /**
+//         * 令牌(暂时废弃)
+//         */
+//        @Resource
+//        private TokenStore tokenStore;
 
         /**
          * 客户端详情
@@ -175,10 +186,7 @@ public class Oauth2Config {
                     .authorizedGrantTypes(GRANT_TYPE[0], GRANT_TYPE[1])
                     // 允许授权的范围
                     .scopes("all")
-                    // 自动认证通过
-                    .autoApprove(true)
-                    // 验证通过回掉地址
-                    .redirectUris("http://www.baidu.com");
+            ;
 
         }
 
@@ -196,10 +204,13 @@ public class Oauth2Config {
                     .checkTokenAccess("permitAll()")
                     // 允许表单验证（前端），申请令牌
                     .allowFormAuthenticationForClients();
+
+
         }
 
         /**
          * 配置令牌端点的安全约束
+         * 启动授权终端
          * @param endpoints
          * @throws Exception
          */
@@ -216,11 +227,10 @@ public class Oauth2Config {
                     .authenticationManager(authenticationManager)
                     // 允许post请求访问令牌
                     .allowedTokenEndpointRequestMethods(HttpMethod.POST)
+                    // 校验token
+                    .tokenServices(tokenServices())
                     ;
 
-            // 配置 tokenService 参数
-            DefaultTokenServices tokenServices = new DefaultTokenServices();
-            endpoints.getTokenStore();
 
         }
 
@@ -236,7 +246,7 @@ public class Oauth2Config {
             // 开启刷新令牌
             defaultTokenServices.setReuseRefreshToken(true);
             // 令牌存储方案
-            defaultTokenServices.setTokenStore(tokenStore);
+            defaultTokenServices.setTokenStore(redisTokenStore());
             // 令牌 assess_token 有效期12小时，可自定义
             defaultTokenServices.setAccessTokenValiditySeconds(60 * 60 * 12);
             // 刷新令牌 refresh_token 有效期一周，可自定义

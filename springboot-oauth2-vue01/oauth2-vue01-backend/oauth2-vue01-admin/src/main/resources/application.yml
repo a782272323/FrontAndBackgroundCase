@@ -46,7 +46,7 @@ pagehelper:
 
 logging:
   level:
-    learn.lhb.oauth2.vue01.web: trace
+    learn.lhb.oauth2.vue01.admin: trace
     learn.lhb.oauth2.vue01.mapper: trace
     learn.lhb.oauth2.vue01.service: trace
 

@@ -1,11 +1,13 @@
 package learn.lhb.oauth2.vue01.admin.controller;
 
 import com.google.common.collect.Maps;
+import learn.lhb.oauth2.vue01.commons.enums.HttpResponseEnum;
 import learn.lhb.oauth2.vue01.commons.utils.BaseResult;
 import learn.lhb.oauth2.vue01.commons.utils.RedisUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,13 +22,26 @@ import java.util.Map;
  * @time 17:40
  */
 @RestController
-@RequestMapping("test")
 public class TestController {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Resource
     private RedisUtils redisUtils;
+
+    @GetMapping("test")
+    public BaseResult test1() {
+        return BaseResult.ok(HttpResponseEnum.OK.toString());
+    }
+
+    @GetMapping("lhb")
+    public BaseResult test2(Authentication authentication) {
+        log.debug("测试");
+        log.trace("Authentication = " + authentication);
+        log.trace(authentication.getName());
+        log.debug(authentication.getAuthorities().toString());
+        return BaseResult.ok("测试,token成功");
+    }
 
     /**
      * 测试缓存的使用

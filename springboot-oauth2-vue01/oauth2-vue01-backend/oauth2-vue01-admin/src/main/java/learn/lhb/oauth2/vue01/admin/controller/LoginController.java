@@ -15,13 +15,5 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
 
-    @GetMapping("test")
-    public BaseResult test1() {
-        return BaseResult.ok(HttpResponseEnum.OK.toString());
-    }
 
-    @GetMapping("portal/test")
-    public BaseResult test2() {
-        return BaseResult.ok("测试绕过token成功");
-    }
 }
