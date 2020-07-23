@@ -14,7 +14,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Description
+ * @Description 自定义异常处理类
+ * 校验token是否过期
+ * 用来解决匿名用户访问无权限资源时的异常,也就是跟token相关的资源异常
  * @author Herbie Leung(梁鸿斌)
  * @date 2020/7/23
  * @time 11:20

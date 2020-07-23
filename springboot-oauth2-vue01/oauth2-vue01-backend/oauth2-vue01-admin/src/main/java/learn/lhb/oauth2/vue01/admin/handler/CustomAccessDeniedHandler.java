@@ -13,7 +13,9 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 /**
- * @Description
+ * @Description 自定义异常处理类
+ * 校验token携带的权限是否足以访问接口资源
+ * 用来解决认证过的用户访问无权限资源时的异常，主要跟权限控制相关
  * @author Herbie Leung(梁鸿斌)
  * @date 2020/7/23
  * @time 11:20

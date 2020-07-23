@@ -2,6 +2,7 @@ package learn.lhb.oauth2.vue01.admin.config;
 
 import learn.lhb.oauth2.vue01.admin.handler.AuthExceptionEntryHandler;
 import learn.lhb.oauth2.vue01.admin.handler.CustomAccessDeniedHandler;
+import learn.lhb.oauth2.vue01.admin.handler.OAuth2WebResponseExceptionTranslator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Bean;
@@ -12,6 +13,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.security.oauth2.config.annotation.configurers.ClientDetailsServiceConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.AuthorizationServerConfigurerAdapter;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableAuthorizationServer;
@@ -21,10 +23,10 @@ import org.springframework.security.oauth2.config.annotation.web.configurers.Aut
 import org.springframework.security.oauth2.config.annotation.web.configurers.AuthorizationServerSecurityConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configurers.ResourceServerSecurityConfigurer;
 import org.springframework.security.oauth2.provider.ClientDetailsService;
+import org.springframework.security.oauth2.provider.error.WebResponseExceptionTranslator;
 import org.springframework.security.oauth2.provider.expression.OAuth2WebSecurityExpressionHandler;
 import org.springframework.security.oauth2.provider.token.AuthorizationServerTokenServices;
 import org.springframework.security.oauth2.provider.token.DefaultTokenServices;
-import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.redis.RedisTokenStore;
 
 import javax.annotation.Resource;
@@ -113,11 +115,12 @@ public class Oauth2Config {
                     .expressionHandler(expressionHandler)
                     // 资源id
                     .resourceId(RESOURCE_ID)
-                    // 自定义异常处理
+                    // 自定义异常处理,token过期或失效的处理
                     .authenticationEntryPoint(new AuthExceptionEntryHandler())
+                    // 自定义异常处理,token权限不够的处理
                     .accessDeniedHandler(new CustomAccessDeniedHandler())
                     // 在这些资源上只允许基于令牌的身份验证。(具体干哈不清楚)
-                    .stateless(true)
+//                    .stateless(true)
             ;
 
         }
@@ -156,6 +159,9 @@ public class Oauth2Config {
 
         @Autowired
         private RedisConnectionFactory connectionFactory;
+
+        @Autowired
+        private OAuth2WebResponseExceptionTranslator oAuth2WebResponseExceptionTranslator;
 
         /**
          * 使用redis来存储令牌
@@ -203,7 +209,8 @@ public class Oauth2Config {
                     // /oauth/check_token 公开
                     .checkTokenAccess("permitAll()")
                     // 允许表单验证（前端），申请令牌
-                    .allowFormAuthenticationForClients();
+                    .allowFormAuthenticationForClients()
+            ;
 
 
         }
@@ -231,7 +238,8 @@ public class Oauth2Config {
                     .tokenServices(tokenServices())
                     ;
 
-
+            // 异常翻译器
+            endpoints.exceptionTranslator(oAuth2WebResponseExceptionTranslator);
         }
 
         /**
