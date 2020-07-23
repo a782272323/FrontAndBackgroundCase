@@ -205,13 +205,22 @@ public class Oauth2Config {
          */
         @Override
         public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+            //token信息存到服务内存
+//            endpoints.tokenStore(new InMemoryTokenStore())
+//                    .authenticationManager(authenticationManager);
+
             endpoints
+                    // 令牌存redis
+                    .tokenStore(redisTokenStore())
                     // 认证管理器,支持密码模式
                     .authenticationManager(authenticationManager)
                     // 允许post请求访问令牌
                     .allowedTokenEndpointRequestMethods(HttpMethod.POST)
-                    // 暂时使token存储到内存， todo 有空存储到redis
-                    .tokenStore(new InMemoryTokenStore());
+                    ;
+
+            // 配置 tokenService 参数
+            DefaultTokenServices tokenServices = new DefaultTokenServices();
+            endpoints.getTokenStore();
 
         }
 
