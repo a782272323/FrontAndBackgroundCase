@@ -19,7 +19,7 @@ spring:
     # redis一共16个库，先使用第一个
     database: 0
     host: 47.95.206.128
-    port: 6379
+    port: 3379
     # 超时时间 5s
     timeout: 5000
     password: 123456
