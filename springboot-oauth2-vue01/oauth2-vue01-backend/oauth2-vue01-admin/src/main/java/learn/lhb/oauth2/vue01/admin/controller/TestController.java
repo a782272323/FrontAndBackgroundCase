@@ -31,7 +31,7 @@ public class TestController {
 
     @GetMapping("test")
     public BaseResult test1() {
-        return BaseResult.ok("测试集成部署");
+        return BaseResult.ok("测试集成部署1");
     }
 
     @GetMapping("lhb")
