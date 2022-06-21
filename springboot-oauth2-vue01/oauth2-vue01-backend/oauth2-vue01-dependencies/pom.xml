@@ -43,7 +43,7 @@
         <!-- Spring Settings 统一的依赖管理 -->
         <spring-boot-common.version>2.2.0.RELEASE</spring-boot-common.version><!-- Springboot 基础依赖版本 -->
         <spring-jdbc.version>5.2.0.RELEASE</spring-jdbc.version><!-- spring JDBC 版本号 -->
-        <mysql.version>8.0.16</mysql.version><!-- MySQL 版本号 -->
+        <mysql.version>8.0.28</mysql.version><!-- MySQL 版本号 -->
         <druid.version>1.1.10</druid.version><!-- 阿里巴巴 数据库连接池版本号 -->
         <junit.version>4.12</junit.version><!-- 单元测试junit 版本号 -->
         <slf4j.version>1.7.25</slf4j.version><!-- 日志版本号 -->
